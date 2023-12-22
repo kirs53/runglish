@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RunglishToRussian</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .header {
+      background-color: #C4C29C;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .search-area {
+      background-color: #F5F5DC;
+      padding: 20px;
+      text-align: center;
+    }
+    .results-area {
+      background-color: #E1D7B3;
+      padding: 20px;
+      min-height: 100vh; /* Задаем минимальную высоту равную высоте видимой области */
+    }
+    .search-box {
+      padding: 10px;
+      font-size: 16px;
+      width: 300px;
+      margin: 20px;
+    }
+    .results {
+      list-style-type: none;
+      padding: 0;
+      margin: 20px;
+    }
+    .results li {
+      padding: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .results li:hover {
+      background-color: #f0f0f0;
+    }
+  </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+  <div class="header">
+    RunglishToRussian
+  </div>
+  <div class="search-area">
+    <input class="search-box" placeholder="Type a word...">
+  </div>
+  <div class="results-area">
+    <ul class="results"></ul>
+    <script>
+      $(document).ready(function() {
+        let debounce;
+        $('.search-box').on('keydown', function (e) {
+          clearTimeout(debounce)
+          debounce = setTimeout(() => {
+                  getAutoComplete();
+          }, 300);
+        })
+      })
+
+      function getAutoComplete() {
+        const query = $('.search-box').val();
+        fetch('http://localhost:5000/search?q=' + encodeURIComponent(query.trim()))
+          .then((resp) => resp.json())
+          .then((data) => {
+            $('.results').empty();
+            for (let i = 0; i < data.length; i++) {
+              $('.results').append('<li>' + data[i] + '</li>');
+            }
+          })
+      }
+    </script>
+  </div>
+</body>
+</html>

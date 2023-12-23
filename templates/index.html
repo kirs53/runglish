@@ -23,7 +23,7 @@
     .results-area {
       background-color: #E1D7B3;
       padding: 20px;
-      min-height: 100vh; /* Задаем минимальную высоту равную высоте видимой области */
+      min-height: 100vh;
     }
     .search-box {
       padding: 10px;
@@ -52,7 +52,7 @@
     RunglishToRussian
   </div>
   <div class="search-area">
-    <input class="search-box" placeholder="Type a word...">
+    <input class="search-box" placeholder="Введите англицизм...">
   </div>
   <div class="results-area">
     <ul class="results"></ul>
@@ -74,7 +74,7 @@
           .then((data) => {
             $('.results').empty();
             for (let i = 0; i < data.length; i++) {
-              $('.results').append('<li>' + data[i] + '</li>');
+              $('.results').append('<li><strong>Предложение:</strong> ' + data[i][0] + '<br><strong>Парафраз:</strong> ' + data[i][1] + '</li>');
             }
           })
       }

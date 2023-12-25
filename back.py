@@ -1,13 +1,12 @@
 from flask import Flask, request, render_template
 from elasticsearch import Elasticsearch
-import csv
 
 es = Elasticsearch(hosts=["http://127.0.0.1:9200"])
 print(f"Connected to ElasticSearch cluster {es.info().body['cluster_name']}")
 
 
 app = Flask(__name__)
-MAX_SIZE = 10
+MAX_SIZE = 15
 
 @app.route("/")
 def home():

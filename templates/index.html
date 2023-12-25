@@ -32,18 +32,37 @@
       margin: 20px;
     }
     .results {
-      list-style-type: none;
-      padding: 0;
-      margin: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: 20px;
     }
-    .results li {
+
+    .sentences-container,
+    .paraphrases-container {
       padding: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s;
+      border: 2px solid #999;
+      margin: 10px;
+      text-align: left;
+      position: relative;
+      display: flex;
+      flex-direction: column;
     }
-    .results li:hover {
+    .sentences-container div:hover,
+    .paraphrases-container div:hover {
       background-color: #f0f0f0;
+
     }
+
+
+    .container-title {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
   </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
@@ -56,26 +75,59 @@
   </div>
   <div class="results-area">
     <ul class="results"></ul>
+    <div class="equivalents-container">
+      <div class="container-title">Эквиваленты:</div>
+    </div>
     <script>
       $(document).ready(function() {
+        $('.sentences-container div').hover(
+          function() {
+            const index = $(this).index();
+            $(this).css('background-color', '#f0f0f0');
+            $('.paraphrases-container div').eq(index).css('background-color', '#f0f0f0');
+          },
+          function() {
+            const index = $(this).index();
+            $(this).css('background-color', 'transparent');
+            $('.paraphrases-container div').eq(index).css('background-color', 'transparent');
+          }
+        );
+        $('.paraphrases-container div').hover(
+          function() {
+            const index = $(this).index();
+            $(this).css('background-color', '#f0f0f0');
+            $('.sentences-container div').eq(index).css('background-color', '#f0f0f0');
+          },
+          function() {
+            const index = $(this).index();
+            $(this).css('background-color', 'transparent');
+            $('.sentences-container div').eq(index).css('background-color', 'transparent');
+          }
+        );
         let debounce;
         $('.search-box').on('keydown', function (e) {
           clearTimeout(debounce)
           debounce = setTimeout(() => {
-                  getAutoComplete();
+            getAutoComplete();
           }, 300);
         })
       })
 
-      function getAutoComplete() {
+        function getAutoComplete() {
         const query = $('.search-box').val();
         fetch('http://localhost:5000/search?q=' + encodeURIComponent(query.trim()))
           .then((resp) => resp.json())
           .then((data) => {
             $('.results').empty();
+            let sentencesContainer = '<div class="sentences-container"><div class="container-title">Предложения:</div>';
+            let paraphrasesContainer = '<div class="paraphrases-container"><div class="container-title">Парафразы:</div>';
             for (let i = 0; i < data.length; i++) {
-              $('.results').append('<li><strong>Предложение:</strong> ' + data[i][0] + '<br><strong>Парафраз:</strong> ' + data[i][1] + '</li>');
+              sentencesContainer += '<div>• ' + data[i][0] + '</div>';
+              paraphrasesContainer += '<div>• ' + data[i][1] + '</div>';
             }
+            sentencesContainer += '</div>';
+            paraphrasesContainer += '</div>';
+            $('.results').append(sentencesContainer + paraphrasesContainer);
           })
       }
     </script>
